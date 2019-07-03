@@ -14,7 +14,10 @@ def get_pixels():
 
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
+from adafruit_servokit import ServoKit
+
 kit = MotorKit()
+servokit = ServoKit(channels=16)
 
 import atexit
 
@@ -23,10 +26,14 @@ def goodbye():
     print("Exiting")
     kit.stepper1.release()
     kit.stepper2.release()
-    
+    servokit.continuous_servo[0].throttle = 0
+    servokit.servo[0].angle = None
 
+curangle = 45
+angle_delta = 10
+servokit.servo[0].angle = curangle 
 
-temp =23
+temp =22
 for t in range(100000):
     data=get_pixels()
     left = 0
@@ -65,23 +72,27 @@ for t in range(100000):
     
     if (left > 4 and right <= 2):
         dir = stepper.FORWARD
-        val = kit.stepper2.onestep(direction=dir, style=stepper.DOUBLE)
-        print("L" + str(val))
+        #val = kit.stepper2.onestep(direction=dir, style=stepper.DOUBLE)
+        curangle -= angle_delta
+        servokit.servo[0].angle = curangle 
+        print("L" + str(curangle))
 
     if (right > 4 and left <= 2):
         dir = stepper.BACKWARD
-        val = kit.stepper2.onestep(direction=dir, style=stepper.DOUBLE)
-        print("R" + str(val))
+        curangle += angle_delta
+        servokit.servo[0].angle = curangle 
+        #val = kit.stepper2.onestep(direction=dir, style=stepper.DOUBLE)
+        print("R" + str(curangle))
 
     if (top > 4 and bottom <= 2):
         dir = stepper.BACKWARD
-        for z in range(0):
+        for z in range(50):
             val = kit.stepper1.onestep(direction=dir, style=stepper.DOUBLE)
         print("T" + str(val))
 
     if (bottom > 4 and top <= 2):
         dir = stepper.FORWARD
-        for z in range(0):
+        for z in range(50):
             val = kit.stepper1.onestep(direction=dir, style=stepper.DOUBLE)
         print("B" + str(val))
         

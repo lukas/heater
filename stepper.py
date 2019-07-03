@@ -30,6 +30,6 @@ else:
 for i in range(args.distance):
     val = s.onestep(direction=dir, style=stepper.INTERLEAVE)
     print(val)
-    time.sleep(0.05)
+    time.sleep(0.005)
     
 s.release()
